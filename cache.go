@@ -1,9 +1,5 @@
 package main
 
-import (
-	"log"
-)
-
 type Record struct {
 	ip string
 }
@@ -14,8 +10,6 @@ type Cache struct {
 
 func (c Cache) Set(hostname string, r *Record) {
 	c.records[hostname] = r
-
-	log.Printf("records: %v", c.records)
 }
 
 func (c Cache) Get(hostname string) (*Record, bool) {

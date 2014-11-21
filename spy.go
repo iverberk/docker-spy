@@ -25,14 +25,14 @@ func (s *Spy) readEventStream(events chan *dockerApi.APIEvents) {
 		case "start":
 			container := s.inspectContainer(msg.ID)
 
-			name := container.Config.Hostname + "." + container.Config.Domainname
+			name := container.Config.Hostname + "." + container.Config.Domainname + "."
 			log.Printf("Adding cache record for %v", name)
 
 			s.dns.cache.Set(name, &Record{container.NetworkSettings.IPAddress})
 		case "die":
 			container := s.inspectContainer(msg.ID)
 
-			name := container.Config.Hostname + "." + container.Config.Domainname
+			name := container.Config.Hostname + "." + container.Config.Domainname + "."
 
 			log.Printf("Removing cache record for %v", name)
 			s.dns.cache.Remove(name)

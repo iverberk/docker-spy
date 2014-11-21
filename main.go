@@ -1,10 +1,11 @@
 package main
 
 import (
-	dockerApi "github.com/fsouza/go-dockerclient"
 	"log"
 	"os"
 	"os/signal"
+
+	dockerApi "github.com/fsouza/go-dockerclient"
 )
 
 func main() {
@@ -12,16 +13,22 @@ func main() {
 	log.Println("Starting DNS server...")
 
 	server := &DNS{
-		host:   "0.0.0.0",
-		port:   6500,
-		domain: ".",
+		host:      "0.0.0.0",
+		port:      6500,
+		recursors: []string{"130.115.1.1:53", "130.115.15.2:53"},
+		domain:    "localdomain.",
 	}
 
 	server.Run()
 
 	log.Println("Listening for container events...")
 
-	docker, err := dockerApi.NewClient("unix://var/run/docker.sock")
+	host := os.Getenv("DOCKER_HOST")
+	if host == "" {
+		host = "unix:///var/run/docker.sock"
+	}
+
+	docker, err := dockerApi.NewClient(host)
 
 	if err != nil {
 		log.Fatal(err)

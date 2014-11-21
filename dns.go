@@ -5,14 +5,14 @@ import (
 	"log"
 	"net"
 	"strconv"
-	"strings"
 )
 
 type DNS struct {
-	host   string
-	port   int
-	domain string
-	cache  Cache
+	host      string
+	port      int
+	domain    string
+	recursors []string
+	cache     Cache
 }
 
 func (s *DNS) Run() {
@@ -27,7 +27,8 @@ func (s *DNS) Run() {
 		Handler: mux,
 	}
 
-	mux.HandleFunc(".", s.handleDNSRequest)
+	mux.HandleFunc(".", s.handleDNSExternal)
+	mux.HandleFunc(s.domain, s.handleDNSInternal)
 
 	go func() {
 		err := srv.ListenAndServe()
@@ -37,15 +38,16 @@ func (s *DNS) Run() {
 	}()
 }
 
-func (s *DNS) handleDNSRequest(w dns.ResponseWriter, req *dns.Msg) {
+func (s *DNS) handleDNSInternal(w dns.ResponseWriter, req *dns.Msg) {
+
 	q := req.Question[0]
 
-	name := strings.TrimSuffix(q.Name, s.domain)
+	log.Printf("Internal DNS request received for " + q.Name)
 
 	if q.Qtype == dns.TypeA && q.Qclass == dns.ClassINET {
-		if record, ok := s.cache.Get(name); ok {
+		if record, ok := s.cache.Get(q.Name); ok {
 
-			log.Printf("Found record for %s", name)
+			log.Printf("Found record for %s", q.Name)
 
 			m := new(dns.Msg)
 			m.SetReply(req)
@@ -61,7 +63,31 @@ func (s *DNS) handleDNSRequest(w dns.ResponseWriter, req *dns.Msg) {
 			return
 		}
 
-		log.Printf("No record found for %s", name)
+		log.Printf("No record found for %s", q.Name)
 		dns.HandleFailed(w, req)
 	}
+}
+
+func (s *DNS) handleDNSExternal(w dns.ResponseWriter, req *dns.Msg) {
+
+	log.Printf("External DNS request received for " + req.Question[0].Name)
+
+	c := &dns.Client{Net: "udp"}
+	var r *dns.Msg
+	var err error
+	for _, recursor := range s.recursors {
+		r, _, err = c.Exchange(req, recursor)
+		if err == nil {
+			if err := w.WriteMsg(r); err != nil {
+				log.Printf("DNS lookup failed %v", err)
+			}
+			return
+		}
+	}
+
+	m := &dns.Msg{}
+	m.SetReply(req)
+	m.RecursionAvailable = true
+	m.SetRcode(req, dns.RcodeServerFailure)
+	w.WriteMsg(m)
 }
