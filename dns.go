@@ -20,15 +20,16 @@ func (s *DNS) Run() {
 	s.cache.records = make(map[string]*Record)
 
 	mux := dns.NewServeMux()
+	bind := s.bind + ":" + strconv.Itoa(s.port)
 
 	srvUDP := &dns.Server{
-		Addr:    s.bind + ":" + strconv.Itoa(s.port),
+		Addr:    bind,
 		Net:     "udp",
 		Handler: mux,
 	}
 
 	srvTCP := &dns.Server{
-		Addr:    s.bind + ":" + strconv.Itoa(s.port),
+		Addr:    bind,
 		Net:     "tcp",
 		Handler: mux,
 	}
@@ -37,6 +38,8 @@ func (s *DNS) Run() {
 	mux.HandleFunc(s.domain, s.handleDNSInternal)
 
 	go func() {
+		log.Printf("Binding UDP listener to %s", bind)
+
 		err := srvUDP.ListenAndServe()
 		if err != nil {
 			log.Fatal(err)
@@ -44,6 +47,8 @@ func (s *DNS) Run() {
 	}()
 
 	go func() {
+		log.Printf("Binding TCP listener to %s", bind)
+
 		err := srvTCP.ListenAndServe()
 		if err != nil {
 			log.Fatal(err)
@@ -72,7 +77,6 @@ func (s *DNS) handleDNSInternal(w dns.ResponseWriter, req *dns.Msg) {
 			m.Answer = append(m.Answer, a)
 			w.WriteMsg(m)
 
-			log.Printf("sent: %v", m)
 			return
 		}
 
@@ -95,6 +99,12 @@ func (s *DNS) handleDNSExternal(w dns.ResponseWriter, req *dns.Msg) {
 	var r *dns.Msg
 	var err error
 	for _, recursor := range s.recursors {
+
+		if recursor == "" {
+			log.Printf("Found empty recursor")
+			continue
+		}
+
 		r, _, err = c.Exchange(req, recursor)
 		if err == nil {
 			if err := w.WriteMsg(r); err != nil {
