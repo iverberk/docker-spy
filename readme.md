@@ -15,6 +15,8 @@ The easiest way to run docker-spy is through Docker. The [image](https://registr
 * DOCKER_HOST: the location of the Docker daemon. Defaults to the DOCKER_HOST environment variable or, if the DOCKER_HOST environment variable is not set, unix:///var/run/docker.sock. Setting this explicitly allows you to override the location.
 Docker-spy can be started with the following command (using all defaults, add any environment settings that you wish to change):
 
+Docker-spy will consider all DNS requests with the above DNS_DOMAIN to be internal requests that should map to a container. All other DNS requests are forwarded to the recursor, so the DNS server should be relatively transparent.
+
 To create a container you can issue the following command:
 
 ```
