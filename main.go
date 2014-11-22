@@ -10,7 +10,7 @@ import (
 	dockerApi "github.com/fsouza/go-dockerclient"
 )
 
-var dnsBind = flag.String("dns-bind", getopt("DNS_HOST", "0.0.0.0"), "Bind address for the DNS server")
+var dnsBind = flag.String("dns-bind", getopt("DNS_BIND", "0.0.0.0"), "Bind address for the DNS server")
 var dnsPort = flag.String("dns-port", getopt("DNS_PORT", "53"), "Port for the DNS server")
 var dnsRecursor = flag.String("dns-recursor", getopt("DNS_RECURSOR", ""), "DNS recursor for non-local addresses")
 var dnsDomain = flag.String("dns-domain", getopt("DNS_DOMAIN", "localdomain"), "The domain that Docker-spy should consider local")
