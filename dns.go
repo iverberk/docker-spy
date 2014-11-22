@@ -8,7 +8,7 @@ import (
 )
 
 type DNS struct {
-	host      string
+	bind      string
 	port      int
 	domain    string
 	recursors []string
@@ -21,9 +21,15 @@ func (s *DNS) Run() {
 
 	mux := dns.NewServeMux()
 
-	srv := &dns.Server{
-		Addr:    s.host + ":" + strconv.Itoa(s.port),
+	srvUDP := &dns.Server{
+		Addr:    s.bind + ":" + strconv.Itoa(s.port),
 		Net:     "udp",
+		Handler: mux,
+	}
+
+	srvTCP := &dns.Server{
+		Addr:    s.bind + ":" + strconv.Itoa(s.port),
+		Net:     "tcp",
 		Handler: mux,
 	}
 
@@ -31,7 +37,14 @@ func (s *DNS) Run() {
 	mux.HandleFunc(s.domain, s.handleDNSInternal)
 
 	go func() {
-		err := srv.ListenAndServe()
+		err := srvUDP.ListenAndServe()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	go func() {
+		err := srvTCP.ListenAndServe()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -42,12 +55,10 @@ func (s *DNS) handleDNSInternal(w dns.ResponseWriter, req *dns.Msg) {
 
 	q := req.Question[0]
 
-	log.Printf("Internal DNS request received for " + q.Name)
-
 	if q.Qtype == dns.TypeA && q.Qclass == dns.ClassINET {
 		if record, ok := s.cache.Get(q.Name); ok {
 
-			log.Printf("Found record for %s", q.Name)
+			log.Printf("Found internal record for %s", q.Name)
 
 			m := new(dns.Msg)
 			m.SetReply(req)
@@ -60,19 +71,27 @@ func (s *DNS) handleDNSInternal(w dns.ResponseWriter, req *dns.Msg) {
 			a := &dns.A{rr_header, net.ParseIP(record.ip)}
 			m.Answer = append(m.Answer, a)
 			w.WriteMsg(m)
+
+			log.Printf("sent: %v", m)
 			return
 		}
 
-		log.Printf("No record found for %s", q.Name)
+		log.Printf("No internal record found for %s", q.Name)
 		dns.HandleFailed(w, req)
 	}
+
+	log.Printf("Only handling type A requests, skipping")
+	dns.HandleFailed(w, req)
 }
 
 func (s *DNS) handleDNSExternal(w dns.ResponseWriter, req *dns.Msg) {
 
-	log.Printf("External DNS request received for " + req.Question[0].Name)
+	network := "udp"
+	if _, ok := w.RemoteAddr().(*net.TCPAddr); ok {
+		network = "tcp"
+	}
 
-	c := &dns.Client{Net: "udp"}
+	c := &dns.Client{Net: network}
 	var r *dns.Msg
 	var err error
 	for _, recursor := range s.recursors {
@@ -81,13 +100,10 @@ func (s *DNS) handleDNSExternal(w dns.ResponseWriter, req *dns.Msg) {
 			if err := w.WriteMsg(r); err != nil {
 				log.Printf("DNS lookup failed %v", err)
 			}
+			log.Printf("Found external record for " + req.Question[0].Name)
 			return
 		}
 	}
 
-	m := &dns.Msg{}
-	m.SetReply(req)
-	m.RecursionAvailable = true
-	m.SetRcode(req, dns.RcodeServerFailure)
-	w.WriteMsg(m)
+	dns.HandleFailed(w, req)
 }
