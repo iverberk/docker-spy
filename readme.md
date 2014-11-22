@@ -28,7 +28,7 @@ This maps the Docker socket as a volume in the container so that events may be t
 To have seamless DNS resolution and access to your containers you should perform the following steps:
 
 1. Create an /etc/resolver/$DOMAIN file (create the /etc/resolver directory first). $DOMAIN should be substituted with the domain that you use for local development (e.g. for 'localdomain' create a /etc/resolver/localdomain file). Add the following contents to this file: ```nameserver 172.17.42.1```
-2. Create a route so that the container ip range (172.17.*.*) is accessible from the osx host system through the boot2docker host adapter: ```sudo route -n add -net 172.17.0.0 192.168.59.104``` <br><br>**important:** substitute 192.168.59.104 with the ip address of your boot2docker vm (run boot2docker ip to find out what it is)
+2. Create a route so that the container ip range (172.17.*.*) is accessible from the osx host system through the boot2docker host adapter: ```sudo route -n add -net 172.17.0.0 192.168.59.104```<br>**important:** substitute 192.168.59.104 with the ip address of your boot2docker vm (run boot2docker ip to find out what it is)
 3. You should now be able to ping your containers directly and run DNS queries against 172.17.42.1
 
 ### Linux
