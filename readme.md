@@ -15,7 +15,7 @@ The easiest way to run docker-spy is through Docker. The [image](https://registr
 * DOCKER_HOST: the location of the Docker daemon. Defaults to the DOCKER_HOST environment variable or, if the DOCKER_HOST environment variable is not set, unix:///var/run/docker.sock. Setting this explicitly allows you to override the location.
 Docker-spy can be started with the following command (using all defaults, add any environment settings that you wish to change):
 
-This maps the Docker socket as a volume in the container so that events may be tracked and it publishes port 53 on udp/tcp to the host
+To create a container you can issue the following command:
 
 ```
 docker run -p 53:53/udp -p 53:53 -v /var/run/docker.sock:/var/run/docker.sock iverberk/docker-spy
