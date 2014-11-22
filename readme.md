@@ -6,7 +6,7 @@ It is specifically targeted at small local development environments where you wa
 
 # Usage
 
-The easiest way to run docker-spy is through Docker. The image is based on the scratch image (basically a zero sized image) and contains only the compiled Go executable. Docker-spy can be configured through a number of environment variables:
+The easiest way to run docker-spy is through Docker. The [image](https://registry.hub.docker.com/u/iverberk/docker-spy/) is based on the scratch image (basically a zero sized image) and contains only the compiled Go executable. Docker-spy can be configured through a number of environment variables:
 
 * DNS_BIND: the address that the DNS server will bind to in the container. Defaults to '0.0.0.0'.
 * DNS_PORT: the port on which the DNS server will be reachable (tcp/udp). Defaults to '53'
