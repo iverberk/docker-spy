@@ -49,7 +49,7 @@ To have seamless DNS resolution and access to your containers you should perform
 
 ### Linux
 
-To have automatic DNS resolution of your containers you should update your /etc/resolv.conf and the Docker bridge IP address as a resolver (usually 172.17.42.1 but check it with ifconfig to be certain).
+To have automatic DNS resolution of your containers you should update your /etc/resolv.conf and add the Docker bridge IP address as a resolver (usually 172.17.42.1 but check it with ifconfig to be certain).
 
 # Issues and Contributing
 
