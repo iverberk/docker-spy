@@ -2,7 +2,7 @@
 
 Docker-spy provides a DNS service based on Docker container events. It keeps an in-memory database of records that map container hostnames to ip addresses. When containers are start/stopped/destroyed it keeps track of their location.
 
-It is specifically targeted at small local development environments where you want an easy way to connect with your containers.
+It is specifically targeted at small local development environments where you want an easy way to connect with your containers. Originally developed as part of my [blog series](http://www.ivoverberk.nl/docker-tutorial-puppet-and-the-foreman/) on running a local Puppet dev stack with Docker. 
 
 # Usage
 
