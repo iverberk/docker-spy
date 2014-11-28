@@ -53,7 +53,7 @@ To have automatic DNS resolution of your containers you should update your /etc/
 
 # Issues and Contributing
 
-Docker-spy is really young and has a lot of rough edges. I really wanted to have a basic, working solution before adding nice-to-haves. It is also my first Go program so there will probably be less then idiomatic constructs in the program. Fixes and enhancements are gladly excepted. Issues may be filed against the github repository.
+Docker-spy is really young and has a lot of rough edges. I wanted to have a basic, working solution before adding nice-to-haves. It is also my first Go program so there will probably be less then idiomatic constructs in the program. Fixes and enhancements are gladly accepted. Issues may be filed against the github repository.
 
 ### Building
 
