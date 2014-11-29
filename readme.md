@@ -8,7 +8,7 @@ It is specifically targeted at small local development environments where you wa
 
 The easiest way to run docker-spy is through Docker. The [image](https://registry.hub.docker.com/u/iverberk/docker-spy/) is based on the scratch image (basically a zero sized image) and contains only the compiled Go executable. 
 
-### configuration
+### Configuration
 
 Docker-spy can be configured through a number of environment variables:
 
@@ -17,7 +17,6 @@ Docker-spy can be configured through a number of environment variables:
 * DNS_RECURSOR: the recursor to use when DNS requests are made to non-local addresses. Defaults to '8.8.8.8' from the Dockerfile
 * DNS_DOMAIN: the domain that docker-spy should consider local and keep records for. Defaults to 'localdomain'
 * DOCKER_HOST: the location of the Docker daemon. Defaults to the DOCKER_HOST environment variable or, if the DOCKER_HOST environment variable is not set, unix:///var/run/docker.sock. Setting this explicitly allows you to override the location.
-Docker-spy can be started with the following command (using all defaults, add any environment settings that you wish to change):
 
 ### DNS Forwarding
 
