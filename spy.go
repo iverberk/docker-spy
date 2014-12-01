@@ -68,7 +68,7 @@ func (s *Spy) inspectContainer(id string) *dockerApi.Container {
 
 	container, err := s.docker.InspectContainer(id)
 	if err != nil {
-		log.Fatalf("Unable to inspect container: %s", id[:12])
+		log.Printf("Unable to inspect container: %s", id[:12])
 		return nil
 	}
 
