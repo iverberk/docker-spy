@@ -40,7 +40,12 @@ func (s *Spy) readEventStream(events chan *dockerApi.APIEvents) {
 
 func (s *Spy) mutateContainerInCache(id string, status string) {
 
-	container := s.inspectContainer(id)
+	container, err := s.docker.InspectContainer(id)
+	if err != nil {
+		log.Printf("Unable to inspect container %s, skipping", id[:12])
+		return
+	}
+
 	name := container.Config.Hostname + "." + container.Config.Domainname + "."
 
 	var running = regexp.MustCompile("start|^Up.*$")
@@ -62,15 +67,4 @@ func (s *Spy) mutateContainerInCache(id string, status string) {
 		log.Printf("Removing record for %v", name)
 		s.dns.cache.Remove(name)
 	}
-}
-
-func (s *Spy) inspectContainer(id string) *dockerApi.Container {
-
-	container, err := s.docker.InspectContainer(id)
-	if err != nil {
-		log.Printf("Unable to inspect container: %s", id[:12])
-		return nil
-	}
-
-	return container
 }
