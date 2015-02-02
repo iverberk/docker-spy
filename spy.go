@@ -42,8 +42,7 @@ func (s *Spy) mutateContainerInCache(id string, status string) {
 
 	container, err := s.docker.InspectContainer(id)
 	if err != nil {
-		log.Printf("Unable to inspect container %s, skipping", id)
-		// log.Printf("Unable to inspect container %s, skipping", id[:12])
+		log.Printf("Unable to inspect container %s, skipping", TruncateString(id, 12))
 		return
 	}
 
