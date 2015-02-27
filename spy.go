@@ -46,7 +46,12 @@ func (s *Spy) mutateContainerInCache(id string, status string) {
 		return
 	}
 
-	name := container.Config.Hostname + "." + container.Config.Domainname + "."
+        domain := container.Config.Domainname + "."
+        if domain == "." {
+            domain = s.dns.domain
+        }
+
+	name := container.Config.Hostname + "." + domain
 
 	var running = regexp.MustCompile("start|^Up.*$")
 	var stopping = regexp.MustCompile("die")
