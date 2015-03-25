@@ -10,7 +10,7 @@ import (
 type DNS struct {
 	bind      string
 	port      int
-	domain    string
+	domains    []string
 	recursors []string
 	cache     Cache
 }
@@ -34,7 +34,11 @@ func (s *DNS) Run() {
 		Handler: mux,
 	}
 
-	mux.HandleFunc(s.domain, s.handleDNSInternal)
+	for _, domain := range s.domains {
+            domain = domain + "."
+            log.Printf("Starting resolver for domain %s",domain)
+            mux.HandleFunc(domain, s.handleDNSInternal)
+          }
 	mux.HandleFunc("in-addr.arpa.", s.handleReverseDNSLookup)
 	mux.HandleFunc(".", s.handleDNSExternal)
 
