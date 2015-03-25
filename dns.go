@@ -35,8 +35,10 @@ func (s *DNS) Run() {
 	}
 
 	for _, domain := range s.domains {
-        	mux.HandleFunc(domain, s.handleDNSInternal)
-        }                        
+            domain = domain + "."
+            log.Printf("Starting resolver for domain %s",domain)
+            mux.HandleFunc(domain, s.handleDNSInternal)
+          }
 	mux.HandleFunc("in-addr.arpa.", s.handleReverseDNSLookup)
 	mux.HandleFunc(".", s.handleDNSExternal)
 

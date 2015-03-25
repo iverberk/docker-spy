@@ -15,7 +15,7 @@ Docker-spy can be configured through a number of environment variables:
 * DNS_BIND: the address that the DNS server will bind to in the container. Defaults to '0.0.0.0'.
 * DNS_PORT: the port on which the DNS server will be reachable (tcp/udp). Defaults to '53'
 * DNS_RECURSOR: the recursor to use when DNS requests are made to non-local addresses. Defaults to '8.8.8.8' from the Dockerfile
-* DNS_DOMAIN: the domain that docker-spy should consider local and keep records for. Defaults to 'localdomain'
+* DNS_DOMAINS: the domains ( coma separated ) that docker-spy should consider local and keep records for. Defaults to 'localdomain'
 * DOCKER_HOST: the location of the Docker daemon. Defaults to the DOCKER_HOST environment variable or, if the DOCKER_HOST environment variable is not set, unix:///var/run/docker.sock. Setting this explicitly allows you to override the location.
 
 ### DNS Forwarding
