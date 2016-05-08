@@ -2,11 +2,11 @@
 
 Docker-spy provides a DNS service based on Docker container events. It keeps an in-memory database of records that map container hostnames to ip addresses. When containers are start/stopped/destroyed it keeps track of their location.
 
-It is specifically targeted at small local development environments where you want an easy way to connect with your containers. Originally developed as part of my [blog series](http://www.ivoverberk.nl/docker-tutorial-puppet-and-the-foreman/) on running a local Puppet dev stack with Docker. 
+It is specifically targeted at small local development environments where you want an easy way to connect with your containers. Originally developed as part of my [blog series](http://www.ivoverberk.nl/docker-tutorial-puppet-and-the-foreman/) on running a local Puppet dev stack with Docker.
 
 # Usage
 
-The easiest way to run docker-spy is through Docker. The [image](https://registry.hub.docker.com/u/iverberk/docker-spy/) is based on the scratch image (basically a zero sized image) and contains only the compiled Go executable. 
+The easiest way to run docker-spy is through Docker. The [image](https://registry.hub.docker.com/u/iverberk/docker-spy/) is based on the scratch image (basically a zero sized image) and contains only the compiled Go executable.
 
 ### Configuration
 
@@ -56,4 +56,12 @@ Docker-spy is really young and has a lot of rough edges. I wanted to have a basi
 
 ### Building
 
-To build docker-spy just install the go build environment and run ```go build -o docker-spy *.go``` in the directory.
+Download go package dependencies:
+```
+mkdir -p /tmp/src/ && \
+cd /tmp/src && \
+git clone https://github.com/iverberk/docker-spy.git && \
+GOPATH=/tmp/ go get
+```
+
+To build docker-spy just install the go build environment and run ```GOPATH=/tmp/ go build --ldflags '-linkmode external -extldflags "-static"' -o docker-spy *.go``` in the directory.
